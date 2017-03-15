@@ -21,14 +21,14 @@ class Publisher(models.Model):
 
 
 class Number(models.Model):
-    number =models.PositiveSmallIntegerField(verbose_name='Number')
-
+    number = models.PositiveSmallIntegerField(verbose_name='Number')
     class Meta:
         verbose_name = 'Number'
         verbose_name_plural = 'Numbers'
 
-    def __unicode__(self):
-        return self.number
+    def __str__(self):
+        return "{a}".format(a=self.number)
+
 
 
 class Article(models.Model):
@@ -48,7 +48,7 @@ class Article(models.Model):
         verbose_name_plural = 'Articles'
 
     def __str__(self):
-        return self.text
+        return self.headline
 
     def subjects(self):
         return self.subject.get(pk=self.pk)

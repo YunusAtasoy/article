@@ -1,10 +1,11 @@
 # Django
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import BaseUserManager,AbstractBaseUser,PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 
 # Local Django
+
 from .variables import (
         USER_AUTHOR, USER_MANAGER,
         USER_EDITOR, USER_TYPES
@@ -55,8 +56,13 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    user_types = models.PositiveSmallIntegerField(verbose_name=_('User'),default=USER_AUTHOR, choices=USER_TYPES)
-    email = models.EmailField(verbose_name=_('Email'), max_length=255, unique=True)
+    user_types = models.PositiveSmallIntegerField(
+                    verbose_name=_('User'),
+                    default=USER_AUTHOR,
+                    choices=USER_TYPES)
+    email = models.EmailField(
+                    verbose_name=_('Email'),
+                    max_length=255, unique=True)
     first_name = models.CharField(verbose_name=_('First Name'), max_length=50)
     last_name = models.CharField(verbose_name=_('Last Name'), max_length=50)
     is_active = models.BooleanField(verbose_name=_('Active'), default=True)
@@ -72,6 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')
+    
 
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
@@ -83,6 +90,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.get_full_name()
+
+    def get_user_type(self):
+        return USER_TYPES[self.user_types][1]
 
     def subjects(self):
         return self.subject.get(pk=self.pk)
