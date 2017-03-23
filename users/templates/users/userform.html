@@ -1,0 +1,23 @@
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8">
+    <title>User Input Page</title>
+  </head>
+  <body>
+    <div>
+    <form action="/" method="POST">{% csrf_token %}
+      <table border="1">{{ user_form }}</table>
+      <hr>
+      <input type="submit" name="{{ user_form.prefix }}" value="Submit">
+    </form>
+  </div>
+    <hr>
+    <div>
+    <form action="/" method="POST">{% csrf_token %}
+      <table border="1">{{ user_login }}</table>
+      <hr>
+      <input type="submit" name="{{ user_login.prefix }}" value="Submit">
+    </form>
+  </div>
+  </body>
+</html>

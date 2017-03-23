@@ -38,7 +38,8 @@ class Article(models.Model):
                                      to = 'users.Subject')
     pub_date = models.DateTimeField(default=timezone.now)
     confırm_types = models.PositiveSmallIntegerField(verbose_name=_('CONFIRM_TYPE'),
-                                                     default=WAITING, choices=CONFIRM_TYPES)
+                                                     default=WAITING,
+                                                     choices=CONFIRM_TYPES)
     user = models.ManyToManyField(verbose_name='User',
                                      to = 'users.User')
     number = models.ManyToManyField(Number, verbose_name='Number')

@@ -1,0 +1,15 @@
+<html lang="tr-TR">
+<head>
+    <meta charset="UTF-8">
+    <title>Hoşgeldiniz!</title>
+</head>
+<body>
+<center><h2>Başarıyla Giriş Yaptınız!</h2>
+<b>Hoşgeldin</b> : {{ request.user.get_full_name }}
+<hr>
+<b>Son Giriş Tarihiz : </b> {{ request.user.last_login }}
+<hr>
+<a href="/log_out/"><font color="red">Çıkış Yap!</font></a>
+</center>
+</body>
+</html>

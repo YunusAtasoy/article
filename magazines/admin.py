@@ -9,7 +9,8 @@ class Magazines(admin.ModelAdmin):
 
 
 class Articles(admin.ModelAdmin):
-    list_display = ('headline', 'text', 'subjects', 'user_name', 'numbers','pub_date')
+    list_display = ('headline', 'text', 'subjects', 'user_name',
+                    'numbers','pub_date')
     list_filter = ['headline']
     search_fields = ['headline']
 

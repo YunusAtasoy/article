@@ -14,7 +14,6 @@ from .forms import UserChangeForm
 from .variables import (
     GROUP_AUTHOR, GROUP_MANAGER, GROUP_EDITOR
 )
-
 from .variables import (
         USER_AUTHOR, USER_MANAGER,
         USER_EDITOR, USER_TYPES
@@ -24,6 +23,14 @@ from .variables import (
 
 class UserAdmin(_UserAdmin):
     actions = ['delete_selected']
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'first_name', 'last_name', 'user_types',
+                       'password1', 'password2', 'is_developer')}
+        ),
+    )
 
     fieldsets = (
         (_(u'Base Informations'), {
@@ -36,18 +43,11 @@ class UserAdmin(_UserAdmin):
             'fields' : ('user_types', 'last_login')
         }),
         (_(u'Permissions'), {
-            'fields' : ('is_active', 'is_staff', 'is_developer',
-            'is_superuser', 'groups')
+            'fields' : ('is_active', 'is_staff', 'is_developer','groups')
         }),
     )
 
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'first_name', 'last_name', 'user_types',
-                       'password1', 'password2', 'is_developer')}
-        ),
-    )
+
 
     form = UserChangeForm
 
@@ -59,23 +59,40 @@ class UserAdmin(_UserAdmin):
     ordering = ('first_name', 'last_name')
 
 
-    def save_model(self, request, obj, form, change):
-        obj.save()
-        try:
-            if USER_AUTHOR == obj.user_types :
-                group = Group.objects.get(name=GROUP_AUTHOR)
-                group.user_set.add(obj)
+    def get_fieldsets(self, request, obj=None):
+        fieldsets = super(UserAdmin, self).get_fieldsets(request, obj)
 
-            elif USER_MANAGER == obj.user_types :
-                group = Group.objects.get(name=GROUP_MANAGER)
-                group.user_set.add(obj)
+        custom_fieldsets = deepcopy(fieldsets)
 
-            elif USER_EDITOR == obj.user_types :
-                group = Group.objects.get(name=GROUP_EDITOR)
-                group.user_set.add(obj)
+        if not request.user.is_superuser:
 
-        except Group.DoesNotExist:
-            pass
+            group_names = [group.name for group in request.user.groups.all()]
+            if not GROUP_MANAGER in group_names:
+                custom_fieldsets = [
+                    field for field in custom_fieldsets if field[0] !=
+                        _('Permissions')
+                        ]
+
+            for fieldset in custom_fieldsets:
+                fields = [
+                    field for field in fieldset[1]['fields'] if field !=
+                        'is_superuser'
+                        ]
+                fieldset[1]['fields'] = fields
+
+        return custom_fieldsets
+
+    def get_queryset(self, request):
+        qs = super(UserAdmin, self).get_queryset(request)
+
+        if not request.user.is_superuser:
+            qs = qs.exclude(is_superuser=True)
+
+            group_names = [group.name for group in request.user.groups.all()]
+            if not GROUP_MANAGER in group_names:
+                qs = qs.filter(pk=request.user.id)
+
+        return qs
 
     def delete_model(self, request, queryset):
         if not queryset.is_superuser:

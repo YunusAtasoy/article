@@ -1,7 +1,10 @@
 # Django
+from django.contrib.auth.models import Group
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import BaseUserManager,AbstractBaseUser,PermissionsMixin
+from django.contrib.auth.models import ( BaseUserManager,
+                                         AbstractBaseUser,
+                                         PermissionsMixin)
 from django.utils.translation import ugettext_lazy as _
 
 # Local Django
@@ -10,7 +13,9 @@ from .variables import (
         USER_AUTHOR, USER_MANAGER,
         USER_EDITOR, USER_TYPES
 )
-
+from .variables import (
+    GROUP_AUTHOR, GROUP_MANAGER, GROUP_EDITOR
+)
 
 
 class Subject(models.Model):
@@ -78,7 +83,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')
-    
+
+    def save(self, *args, **kwargs):
+        obj = super(User, self).save(*args, **kwargs)
+        try:
+            if USER_AUTHOR == self.user_types :
+                group = Group.objects.get(name=GROUP_AUTHOR)
+                group.user_set.add(self)
+
+            elif USER_MANAGER == self.user_types :
+                group = Group.objects.get(name=GROUP_MANAGER)
+                group.user_set.add(self)
+
+            elif USER_EDITOR == self.user_types :
+                group = Group.objects.get(name=GROUP_EDITOR)
+                group.user_set.add(self)
+
+        except Group.DoesNotExist:
+            pass
+
+        return super(User, self).save(*args, **kwargs)
+
 
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
