@@ -14,6 +14,7 @@ from .forms import UserChangeForm
 from .variables import (
     GROUP_AUTHOR, GROUP_MANAGER, GROUP_EDITOR
 )
+
 from .variables import (
         USER_AUTHOR, USER_MANAGER,
         USER_EDITOR, USER_TYPES

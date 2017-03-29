@@ -1,0 +1,15 @@
+
+
+{% block body %}
+    <h1>New Article</h1>
+    <div class="col-sm-4 col-md-4"> <!-- kolon kolon ayırıyor -->
+        <div class="panel panel-default"> <!-- logonun üzerine oturacağı panel -->
+            <div class="panel-body">
+              <form method="POST">{% csrf_token %}
+                {{ edit_form }}
+                <button type="submit" class="save btn btn-default">Save</button>
+              </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

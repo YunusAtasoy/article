@@ -1,0 +1,25 @@
+{% block body %}
+<div class="container-fluid songs-container">
+
+    <div class="row">
+
+        <div class="col-sm-4 col-md-3"> <!-- kolon kolon ayırıyor -->
+            <div class="panel panel-default"> <!-- logonun üzerine oturacağı panel -->
+                <div class="panel-body"> <!-- daha düzgün gözükmesi için -->
+                  <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                    <li role="presentation" ><a href="{% url 'edit' pk=article.pk %}" class="btn btn-primary btn-sm" role="button">Comment</a></li>
+                  </ul>
+                  {% if comments %}
+                      {% for article in comments %}
+
+                    <h1>{{ article.headline }}</h1>
+                    <h2>{{ article.users_name }}</h2>
+                    <h2>{{ article.pub_date }}</h2>
+                    {% endfor %}
+                {% endif %}
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}

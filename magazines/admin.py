@@ -1,4 +1,7 @@
+# Django
 from django.contrib import admin
+
+# Local Django
 from .models import Publisher, Number, Magazine, Article
 
 
@@ -9,8 +12,8 @@ class Magazines(admin.ModelAdmin):
 
 
 class Articles(admin.ModelAdmin):
-    list_display = ('headline', 'text', 'subjects', 'user_name',
-                    'numbers','pub_date')
+    list_display = ('headline', 'text', 'subject', 'users_name',
+                    'number', 'pub_date')
     list_filter = ['headline']
     search_fields = ['headline']
 

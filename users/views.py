@@ -7,14 +7,15 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, ListView, DetailView
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import authenticate, login, logout
 
 # Local Django
 from users.variables import USER_FORM_PREFIX, USER_LOGIN_PREFIX
-from users.forms import UserRegisterForm, UserLoginForm
+from users.forms import UserRegisterForm, UserLoginForm, PostForm
 from users.models import User
+from magazines.models import Magazine, Article
 
 class UserView(TemplateView):
     template_name = 'users/userform.html'
@@ -66,3 +67,37 @@ class UserView(TemplateView):
                 print(request.user.is_authenticated())
 
         return super(UserView, self).render_to_response(context)
+
+
+class IndexView(ListView):
+    template_name = 'users/index.html'
+    context_object_name = 'all_magazines'
+
+    def get_queryset(self):
+        return Magazine.objects.all()
+
+
+class DetailView(DetailView):
+    model = Article
+    template_name = 'users/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailView, self).get_context_data(**kwargs)
+        context['comments'] = Article.objects.all()
+        return context
+
+
+def post_new(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    if article and request.method == 'POST':
+        edit_form = PostForm(request.POST)
+        if edit_form.is_valid():
+            point = edit_form.save(commit=False)
+            point.article = article
+            point.user = request.user
+            point.save()
+
+            return redirect('users:detail', pk=article.pk)
+    else:
+        edit_form = PostForm
+    return render(request, 'users/post_edit.html', {'edit_form': edit_form})

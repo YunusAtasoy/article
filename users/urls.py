@@ -7,7 +7,7 @@ from . import views
 from .views import *
 
 # Local Django
-from users.views import UserView
+from users.views import UserView, IndexView, DetailView
 
 
 urlpatterns = [
@@ -15,4 +15,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # Pages
     url(r'^$', UserView.as_view(), name='register'),
+    url(r'index/$', IndexView.as_view(), name='index'),
+    url(r'^(?P<pk>[0-9]+)/$', DetailView.as_view(), name = 'detail'),
+    url(r'^(?P<pk>[-\w]+)/comments/$',views.post_new, name='edit'),
 ]

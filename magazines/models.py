@@ -1,8 +1,10 @@
+# Django
 from django.db import models
-from users.models import Subject
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
+# Local Django
+from users.models import User, Subject
 from users.variables import (
         CONFIRM, EDIT,
         WAITING, CONFIRM_TYPES
@@ -34,15 +36,15 @@ class Number(models.Model):
 class Article(models.Model):
     headline = models.CharField(max_length=50)
     text = models.FileField()
-    subject = models.ManyToManyField(verbose_name='Subject',
-                                     to = 'users.Subject')
+    subjects = models.ManyToManyField(verbose_name=_('Subject'),
+                                     to=Subject)
     pub_date = models.DateTimeField(default=timezone.now)
     confırm_types = models.PositiveSmallIntegerField(verbose_name=_('CONFIRM_TYPE'),
                                                      default=WAITING,
                                                      choices=CONFIRM_TYPES)
-    user = models.ManyToManyField(verbose_name='User',
-                                     to = 'users.User')
-    number = models.ManyToManyField(Number, verbose_name='Number')
+    users = models.ManyToManyField(verbose_name=_('User'),
+                                  to=User)
+    numbers = models.ManyToManyField(Number, verbose_name='Number')
 
     class Meta:
         verbose_name = 'Article'
@@ -51,19 +53,19 @@ class Article(models.Model):
     def __str__(self):
         return self.headline
 
-    def subjects(self):
-        return self.subject.get(pk=self.pk)
+    def subject(self):
+        return ", ".join([i.__str__() for i in self.subjects.all()])
 
-    def user_name(self):
-        return self.user.get(pk=self.pk)
+    def users_name(self):
+        return ", ".join([i.__str__() for i in self.users.all()])
 
-    def numbers(self):
-        return self.number.get(pk=self.pk)
+    def number(self):
+        return ", ".join([i.__str__() for i in self.numbers.all()])
 
 
 class Magazine(models.Model):
     magazine_name = models.CharField(max_length=100)
-    publisher = models.ManyToManyField(Publisher, verbose_name='Publisher')
+    publishers = models.ManyToManyField(Publisher, verbose_name='Publisher')
     number = models.ForeignKey(Number, verbose_name='Number')
     pub_date = models.DateTimeField(default=timezone.now)
 
@@ -75,4 +77,4 @@ class Magazine(models.Model):
         return self.magazine_name
 
     def publisher_name(self):
-        return self.publisher.get(pk=self.pk)
+        return ", ".join([i.__str__() for i in self.publishers.all()])

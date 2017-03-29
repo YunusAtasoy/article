@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 
 # Local Django
 from .models import User
+from magazines.models import Article
 from .variables import (
     GROUP_AUTHOR, GROUP_MANAGER, GROUP_EDITOR
 )
@@ -93,9 +94,9 @@ class UserRegisterForm(forms.ModelForm):
                     first_name=self.cleaned_data.get('first_name'),
                     last_name=self.cleaned_data.get('last_name'),
                     password=self.cleaned_data.get('password1'),
-                )
-                register.set_password(password)
+                    )
                 register.save()
+
             except:
                 register = None
 
@@ -122,3 +123,10 @@ class UserLoginForm(forms.Form):
             if not user.is_active:
                 raise forms.ValidationError("This user is not longer active.")
         return super(UserLoginForm, self).clean(*args, **kwargs)
+
+
+class PostForm(forms.ModelForm):
+
+    class Meta:
+        model = Article
+        fields = ['headline', 'text', 'subjects', 'pub_date']

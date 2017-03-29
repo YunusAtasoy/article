@@ -1,15 +1,28 @@
-<html lang="tr-TR">
-<head>
-    <meta charset="UTF-8">
-    <title>Hoşgeldiniz!</title>
-</head>
-<body>
-<center><h2>Başarıyla Giriş Yaptınız!</h2>
-<b>Hoşgeldin</b> : {{ request.user.get_full_name }}
-<hr>
-<b>Son Giriş Tarihiz : </b> {{ request.user.last_login }}
-<hr>
-<a href="/log_out/"><font color="red">Çıkış Yap!</font></a>
-</center>
-</body>
-</html>
+{% block body %}
+<div class="albums-container container-fluid">
+
+    <!-- Albums -->
+    <div class="row">
+        {% if all_magazines %}
+            {% for magazine in all_magazines %}
+                <div class="col-sm-4 col-lg-2" >
+                    <div class="thumbnail" style="min-height:300px">
+                        <div class="caption">
+                            <h2>{{ magazine.magazine_name }}</h2>
+                            <h4>{{ magazine.publisher_name }}</h4>
+                            <h4>{{ magazine.number }}</h4>
+                            <h4>{{ magazine.pub_date }}</h4>
+
+                            <!-- View Details -->
+                            <a href="{% url 'detail' pk=magazine.pk %}" class="btn btn-primary btn-sm" role="button">View Comments</a>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
