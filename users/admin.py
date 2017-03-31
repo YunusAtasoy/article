@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models import User, Subject
 from copy import deepcopy
 from django.shortcuts import get_object_or_404
 
@@ -11,6 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # Local Django
 from .forms import UserChangeForm
+from .models import User, Subject, Activation
 from .variables import (
     GROUP_AUTHOR, GROUP_MANAGER, GROUP_EDITOR
 )
@@ -22,6 +22,11 @@ from .variables import (
 
 ###    User    ###
 
+class ActivationAdmin(admin.ModelAdmin):
+    list_display = ('get_username','key')
+
+
+
 class UserAdmin(_UserAdmin):
     actions = ['delete_selected']
 
@@ -29,7 +34,7 @@ class UserAdmin(_UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'first_name', 'last_name', 'user_types',
-                       'password1', 'password2', 'is_developer')}
+                       'password1', 'password2')}
         ),
     )
 
@@ -44,7 +49,7 @@ class UserAdmin(_UserAdmin):
             'fields' : ('user_types', 'last_login')
         }),
         (_(u'Permissions'), {
-            'fields' : ('is_active', 'is_staff', 'is_developer','groups')
+            'fields' : ('is_active', 'groups')
         }),
     )
 
@@ -53,8 +58,8 @@ class UserAdmin(_UserAdmin):
     form = UserChangeForm
 
     list_display = ('first_name', 'last_name', 'email', 'user_types',
-                    'is_active', 'is_staff', 'is_developer', 'is_superuser')
-    list_filter = ('is_active', 'is_staff', 'is_developer', 'user_types')
+                    'is_active', 'is_superuser')
+    list_filter = ('is_active', 'user_types')
     search_fields = ('email', 'first_name', 'last_name')
     readonly_fields = ('last_login',)
     ordering = ('first_name', 'last_name')
@@ -134,3 +139,4 @@ class UserAdmin(_UserAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Subject)
+admin.site.register(Activation,ActivationAdmin)

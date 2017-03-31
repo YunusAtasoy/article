@@ -1,8 +1,18 @@
 {% block body %}
+<html>
+<head>
+<style type="text/css">
+          #iki{
+            background-color:yellow;
+            position:absolute;
+            right:30px;
+            top:50px;
+          }
+    </style>
+</head>
+<body>
 <div class="albums-container container-fluid">
-
-    <!-- Albums -->
-    <div class="row">
+<a href="/logout/" id="iki"><font color="red">logout!</font></a>
         {% if all_magazines %}
             {% for magazine in all_magazines %}
                 <div class="col-sm-4 col-lg-2" >
@@ -15,9 +25,8 @@
 
                             <!-- View Details -->
                             <a href="{% url 'detail' pk=magazine.pk %}" class="btn btn-primary btn-sm" role="button">View Comments</a>
-
-
                         </div>
+
                     </div>
                 </div>
 
@@ -26,3 +35,5 @@
     </div>
 </div>
 {% endblock %}
+</body>
+</html>

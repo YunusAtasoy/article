@@ -18,4 +18,7 @@ urlpatterns = [
     url(r'index/$', IndexView.as_view(), name='index'),
     url(r'^(?P<pk>[0-9]+)/$', DetailView.as_view(), name = 'detail'),
     url(r'^(?P<pk>[-\w]+)/comments/$',views.post_new, name='edit'),
+    url(r'^activation/(?P<key>.+)$', views.activation, name='activation'),
+    url(r'^logout/',views.user_logout),
+#     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
 ]

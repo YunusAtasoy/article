@@ -5,10 +5,17 @@ from django.contrib.auth.forms import UserChangeForm as _UserChangeForm
 from django.utils.translation import ugettext_lazy as _
 from django.forms import ModelForm
 from django.contrib.auth import authenticate, login, logout
+from django.conf import settings
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
+from django.db.models import Q
 
 
 # Local Django
-from .models import User
+from .models import User, Activation
 from magazines.models import Article
 from .variables import (
     GROUP_AUTHOR, GROUP_MANAGER, GROUP_EDITOR
@@ -96,6 +103,20 @@ class UserRegisterForm(forms.ModelForm):
                     password=self.cleaned_data.get('password1'),
                     )
                 register.save()
+                # m = Activation(user=register, key=get_random_string(length=50))
+                # m.save()
+                #
+                # subject = 'Hello'
+                # message = settings.LOCAL_HOST_ADDRESS + reverse(
+                #                                         'users.views:activation',
+                #                                         args=[m.key]
+                #                                         )
+                # sender = settings.EMAIL_HOST_USER
+                # to_list = user.email
+                # msg = EmailMessage(subject, message, sender, [to_list])
+                # msg.content_subtype = "html"
+                # msg.send()
+
 
             except:
                 register = None
@@ -129,4 +150,4 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        fields = ['headline', 'text', 'subjects', 'pub_date']
+        fields = ['headline', 'text', 'subjects', 'numbers', 'pub_date']

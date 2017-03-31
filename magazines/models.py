@@ -35,7 +35,7 @@ class Number(models.Model):
 
 class Article(models.Model):
     headline = models.CharField(max_length=50)
-    text = models.FileField()
+    text = models.TextField()
     subjects = models.ManyToManyField(verbose_name=_('Subject'),
                                      to=Subject)
     pub_date = models.DateTimeField(default=timezone.now)

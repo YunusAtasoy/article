@@ -22,5 +22,3 @@ admin.site.register(Publisher)
 admin.site.register(Number)
 admin.site.register(Magazine,Magazines)
 admin.site.register(Article,Articles)
-
-# Register your models here.

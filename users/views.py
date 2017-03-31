@@ -1,20 +1,22 @@
 
 # Django
-from django.shortcuts import render, render_to_response, get_object_or_404
+from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.conf import settings
 from django.contrib import messages
-from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView, FormView, ListView, DetailView
+from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
+from django.core.mail import EmailMessage, send_mail
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import TemplateView, View, FormView, ListView, DetailView
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import authenticate, login, logout
 
 # Local Django
 from users.variables import USER_FORM_PREFIX, USER_LOGIN_PREFIX
 from users.forms import UserRegisterForm, UserLoginForm, PostForm
-from users.models import User
+from users.models import User, Activation
 from magazines.models import Magazine, Article
 
 class UserView(TemplateView):
@@ -40,6 +42,19 @@ class UserView(TemplateView):
             if user_form.is_valid():
                 register = user_form.save(commit=False)
                 register.save()
+                m = Activation(user=register, key=get_random_string(length=50))
+                m.save()
+
+                subject = 'Hello'
+                message = settings.LOCAL_HOST_ADDRESS + reverse(
+                                                        'activation',
+                                                        args=[m.key]
+                                                        )
+                sender = settings.EMAIL_HOST_USER
+                to_list = register.email
+                msg = EmailMessage(subject, message, sender, [to_list])
+                msg.content_subtype = "html"
+                msg.send()
 
                 if register:
                     messages.success(
@@ -65,8 +80,17 @@ class UserView(TemplateView):
                 user = authenticate(email=email, password=password)
                 login(request, user)
                 print(request.user.is_authenticated())
+                return HttpResponseRedirect('/index/')
 
         return super(UserView, self).render_to_response(context)
+
+
+def user_logout(request):
+    read = request.user.id
+    if(not read):
+        return HttpResponseRedirect('/')
+    logout(request)
+    return HttpResponseRedirect('/')
 
 
 class IndexView(ListView):
@@ -94,10 +118,21 @@ def post_new(request, pk):
         if edit_form.is_valid():
             point = edit_form.save(commit=False)
             point.article = article
-            point.user = request.user
+            point.users = request.user
             point.save()
 
             return redirect('users:detail', pk=article.pk)
     else:
         edit_form = PostForm
     return render(request, 'users/post_edit.html', {'edit_form': edit_form})
+
+
+def activation(request, key):
+
+    activation = get_object_or_404(Activation, key=key)
+    activation.user.is_active = True
+    activation.user.save()
+    activation.user.backend = 'django.contrib.auth.backends.ModelBackend'
+    login(request, activation.user)
+
+    return HttpResponseRedirect('/index/')

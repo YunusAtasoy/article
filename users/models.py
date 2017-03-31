@@ -6,6 +6,7 @@ from django.contrib.auth.models import ( BaseUserManager,
                                          AbstractBaseUser,
                                          PermissionsMixin)
 from django.utils.translation import ugettext_lazy as _
+from django.utils.crypto import get_random_string
 
 # Local Django
 
@@ -27,7 +28,6 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.subject
-
 
 
 class UserManager(BaseUserManager):
@@ -70,8 +70,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                     max_length=255, unique=True)
     first_name = models.CharField(verbose_name=_('First Name'), max_length=50)
     last_name = models.CharField(verbose_name=_('Last Name'), max_length=50)
-    is_active = models.BooleanField(verbose_name=_('Active'), default=True)
-    is_staff = models.BooleanField(verbose_name=_('Staff'), default=True)
+    is_active = models.BooleanField(verbose_name=_('Active'), default=False)
+    is_staff = models.BooleanField(verbose_name=_('Staff'), default=False)
     is_developer = models.BooleanField(verbose_name=_('Developer'), default=False)
     subject = models.ManyToManyField(Subject,verbose_name='Subject')
 
@@ -121,3 +121,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def subjects(self):
         return self.subject.get(pk=self.pk)
+
+
+class Activation(models.Model):
+    user = models.OneToOneField(verbose_name='User',
+                              to=settings.AUTH_USER_MODEL)
+    key = models.CharField(max_length=50)
+
+
+    class Meta:
+        verbose_name='Activation'
+        verbose_name_plural='Activations'
+
+    def __str__(self):
+        return self.key
+
+    def get_username(self):
+        return self.user
