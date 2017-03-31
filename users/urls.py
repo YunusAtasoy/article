@@ -20,5 +20,5 @@ urlpatterns = [
     url(r'^(?P<pk>[-\w]+)/comments/$',views.post_new, name='edit'),
     url(r'^activation/(?P<key>.+)$', views.activation, name='activation'),
     url(r'^logout/',views.user_logout),
-#     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
+    url(r'^password_change/$', views.change_password, name='password_change'),
 ]

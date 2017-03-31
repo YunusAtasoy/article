@@ -103,20 +103,6 @@ class UserRegisterForm(forms.ModelForm):
                     password=self.cleaned_data.get('password1'),
                     )
                 register.save()
-                # m = Activation(user=register, key=get_random_string(length=50))
-                # m.save()
-                #
-                # subject = 'Hello'
-                # message = settings.LOCAL_HOST_ADDRESS + reverse(
-                #                                         'users.views:activation',
-                #                                         args=[m.key]
-                #                                         )
-                # sender = settings.EMAIL_HOST_USER
-                # to_list = user.email
-                # msg = EmailMessage(subject, message, sender, [to_list])
-                # msg.content_subtype = "html"
-                # msg.send()
-
 
             except:
                 register = None
@@ -151,3 +137,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Article
         fields = ['headline', 'text', 'subjects', 'numbers', 'pub_date']
+
+
+class PasswordResetRequestForm(forms.Form):
+    email_or_username = forms.CharField(label=("Email Or Username"), max_length=254)

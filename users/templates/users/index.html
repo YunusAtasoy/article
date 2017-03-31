@@ -8,11 +8,18 @@
             right:30px;
             top:50px;
           }
+          #uc{
+            background-color:yellow;
+            position:absolute;
+            right:30px;
+            top:70px;
+          }
     </style>
 </head>
 <body>
 <div class="albums-container container-fluid">
 <a href="/logout/" id="iki"><font color="red">logout!</font></a>
+<a href="/password_change/" id="uc"><font color="red">Change Password</font></a>
         {% if all_magazines %}
             {% for magazine in all_magazines %}
                 <div class="col-sm-4 col-lg-2" >
